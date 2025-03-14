@@ -1,33 +1,6 @@
-# Thư mục Unity
 [Ll]ibrary/
+[Ll]ogs/
 [Tt]emp/
 [Oo]bj/
-[Bb]uild/
-[Ll]ogs/
-[Mm]emoryCaptures/
-
-# Tệp hệ thống
-*.csproj
-*.unityproj
-*.sln
-*.suo
-*.tmp
-*.user
-*.userprefs
-*.pidb
-*.booproj
-*.svd
-
-# Tệp tạm thời
-*.swp
-*.bak
-*.old
-*.orig
-
-# Tệp nền tảng
-*.apk
-*.aab
-*.exe
-
-# Tệp khác
-.DS_Store
+[Uu]ser[Ss]ettings/
+.vs/
