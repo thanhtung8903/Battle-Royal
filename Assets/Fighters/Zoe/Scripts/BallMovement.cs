@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BallMovement : MonoBehaviour
 {
-    private Vector2 direction; // Dirección en la que la bola se expandirá
+    private Vector2 direction; 
     private float expansionSpeed;
     private string userTag;
 
@@ -11,7 +11,7 @@ public class BallMovement : MonoBehaviour
 
     public void Initialize(Vector2 dir, float speed)
     {
-        direction = dir.normalized; // Asegura que la dirección esté normalizada
+        direction = dir.normalized; 
         expansionSpeed = speed;
     }
 
@@ -47,10 +47,10 @@ public class BallMovement : MonoBehaviour
 
     void Update()
     {
-        // Mueve la bola en la dirección calculada
+        
         transform.position += (Vector3)direction * expansionSpeed * Time.deltaTime;
 
-        // Destruye la bola si está fuera de los límites de la pantalla
+        
         if (IsOutOfScreen())
         {
             Destroy(gameObject);
@@ -61,7 +61,7 @@ public class BallMovement : MonoBehaviour
     {
         Vector3 screenPosition = Camera.main.WorldToViewportPoint(transform.position);
 
-        // Comprueba si la bola está fuera del rango visible
+        
         return screenPosition.x < 0 || screenPosition.x > 1 ||
                screenPosition.y < 0 || screenPosition.y > 1;
     }
