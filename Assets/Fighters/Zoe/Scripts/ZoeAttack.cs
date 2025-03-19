@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 public class ZoeAttack : MonoBehaviour
 {
 
-    public Animator animator; // Referencia al Animator para reproducir animaciones de ataque
-    public Transform weaponHitBox; // Posici�n donde se verificar� el impacto de las armas
-    public float attackRange; // Rango en el que se pueden detectar jugadores enemigos
+    public Animator animator; // Tham chiếu đến Animator để phát hoạt ảnh tấn công
+    public Transform weaponHitBox; // Vị trí kiểm tra va chạm của vũ khí
+    public float attackRange; // Phạm vi tấn công, nơi có thể phát hiện kẻ địch
 
-    // Valores de da�o para diferentes ataques
+    // Giá trị sát thương cho các loại tấn công khác nhau
     public float hitDamage;
     public float kickDamage;
     
@@ -17,23 +17,23 @@ public class ZoeAttack : MonoBehaviour
     public float kickDamageToShield;
     
 
-    public float attackRate = 1f; // Tasa de ataque: n�mero de ataques por segundo permitidos
-    public float waitingTimeHit; // Tiempo de espera entre golpes
-    public float waitingTimeKick; // Tiempo de espera entre patadas
-    private float nexAttackTime = 0f; // Acumulador del tiempo de espera para el pr�ximo ataque
+    public float attackRate = 1f; // Tốc độ tấn công: số lần tấn công cho phép mỗi giây
+    public float waitingTimeHit; // Thời gian chờ giữa các đòn đánh
+    public float waitingTimeKick; // Thời gian chờ giữa các đòn đá
+    private float nexAttackTime = 0f; // Thời gian phải chờ trước khi thực hiện đòn tấn công tiếp theo
 
     //public KeyCode hitKey;
     //public KeyCode kickKey;
     //public KeyCode specialPowerKey;
 
-    private ZoeSpecialAttack specialAttack;
-    private UserConfiguration userConfiguration;
+    private ZoeSpecialAttack specialAttack; // Tham chiếu đến kỹ năng đặc biệt
+    private UserConfiguration userConfiguration; // Cấu hình người chơi
 
-    // Atributos para sonidos
+    // Âm thanh cho các đòn tấn công
     [SerializeField] private AudioClip soundAttack1;
     [SerializeField] private AudioClip soundAttack2;
 
-    string ownTag;
+    string ownTag; // Lưu tag của đối tượng này
 
     void Start()
     {
@@ -44,27 +44,27 @@ public class ZoeAttack : MonoBehaviour
         //otherPlayer = LayerMask.GetMask("BaseFighter");
     }
 
-    // Update se llama una vez por cuadro
+    // Update được gọi một lần mỗi frame
     void Update()
     {
-        // Solo permite ataques si ha pasado suficiente tiempo desde el �ltimo ataque
+        // Chỉ cho phép tấn công nếu đã qua đủ thời gian chờ từ lần tấn công trước
         if (Time.time >= nexAttackTime)
         {
-            // Si se presiona la tecla correspondiente, realiza un golpe
+            // Nếu người chơi nhấn phím tương ứng, thực hiện đòn đánh
             if (Input.GetKeyDown(userConfiguration.getHitKey()))
             {
                 hit();
                 SoundsController.Instance.RunSound(soundAttack1);
                 nexAttackTime = Time.time + waitingTimeHit / attackRate;
             }
-            // Si se presiona la tecla correspondiente, realiza una patada
+            // Nếu người chơi nhấn phím tương ứng, thực hiện đòn đá
             else if (Input.GetKeyDown(userConfiguration.getKickKey()))
             {
                 kick();
                 SoundsController.Instance.RunSound(soundAttack2);
                 nexAttackTime = Time.time + waitingTimeKick / attackRate;
             }
-            // Si se presiona la tecla correspondiente, activa el poder especial
+            // Nếu người chơi nhấn phím tương ứng, kích hoạt kỹ năng đặc biệt
             else if (Input.GetKeyDown(userConfiguration.getSpecialPowerKey()))
             {
                 specialAttack.useSpecialAttack();
@@ -72,50 +72,46 @@ public class ZoeAttack : MonoBehaviour
         }
     }
 
-    // M�todo para realizar el golpe
+    // Phương thức thực hiện đòn đánh
     void hit()
     {
-        animator.SetTrigger("attack1"); // Activa la animaci�n de ataque
-        applyDamageToEnemies(hitDamage, hitDamageToShield); // Aplica da�o a los enemigos detectados
+        animator.SetTrigger("attack1"); // Kích hoạt hoạt ảnh tấn công
+        applyDamageToEnemies(hitDamage, hitDamageToShield); // Gây sát thương lên kẻ địch trong phạm vi
     }
 
-    // M�todo para realizar la patada
+    // Phương thức thực hiện đòn đá
     private void kick()
     {
-        // Activa la animaci�n de ataque
-        animator.SetTrigger("attack2"); // DEBER�A SER DIFRENTE PARA LA ANIMACI�N DE KICK
+        animator.SetTrigger("attack2"); // Kích hoạt hoạt ảnh tấn công đá
         applyDamageToEnemies(kickDamage, kickDamageToShield);
     }
 
-    // M�todo que aplica da�o a los enemigos detectados
+    // Phương thức áp dụng sát thương lên kẻ địch bị đánh trúng
     public void applyDamageToEnemies(float damage, float damageToShield)
     {
-        // Detecta jugadores enemigos dentro del �rea del "weaponHitBox"
-        //Collider2D[] hitOtherPlayers = Physics2D.OverlapCircleAll(weaponHitBox.position, attackRange, otherPlayer);
-        //Collider2D[] hitOtherPlayers = Physics2D.OverlapCapsuleAll(weaponHitBox.position, attackRange, )
         Collider2D[] hitOtherPlayers = Physics2D.OverlapCircleAll(weaponHitBox.position, attackRange);
 
 
-        // Aplica da�o a cada enemigo detectado
+        // Áp dụng sát thương lên từng kẻ địch bị đánh trúng
         foreach (Collider2D playerEnemy in hitOtherPlayers)
         {
 
-            //var health = playerEnemy.GetComponent<AlienHealth>();
-            //var shield = playerEnemy.GetComponent<Shield>();
             Damageable damageable = playerEnemy.GetComponent<Damageable>();
             Shieldable shield = playerEnemy.GetComponent<Shieldable>();
 
             if (damageable != null && gameObject.tag != playerEnemy.tag)
             {
+                // Nếu đối thủ không có lá chắn hoặc lá chắn không hoạt động, gây sát thương trực tiếp
                 if (shield == null || !shield.IsShieldActive())
                 {
                     damageable.decreaseLife(damage);
                     Debug.Log("We hit " + playerEnemy.name);
-                    // Cargar barra de ataque especial con cada golpe acertado
+                    // Tăng thanh năng lượng kỹ năng đặc biệt mỗi khi đánh trúng
                     specialAttack.increaseCharge(damage);
                 }
                 else
                 {
+                    // Nếu đối thủ có lá chắn, gây sát thương lên lá chắn
                     shield.decreaseShieldCapacity(damageToShield);
                 }
             }
@@ -124,7 +120,7 @@ public class ZoeAttack : MonoBehaviour
     }
 
 
-    // M�todo necesario para usar hijos del GameObject en el editor
+    // Phương thức giúp tìm kiếm thành phần con trong Unity Editor
     private void OnValidate()
     {
         if (weaponHitBox == null)
@@ -137,74 +133,16 @@ public class ZoeAttack : MonoBehaviour
         }
     }
 
-    // Dibuja un Gizmo para visualizar el �rea de ataque en la escena
+    // Vẽ một vòng tròn Gizmo để hiển thị phạm vi tấn công trong Scene
     private void OnDrawGizmosSelected()
     {
         if (weaponHitBox == null)
         {
             return;
         }
-        Gizmos.color = Color.red; // Color del Gizmo
-        Gizmos.DrawWireSphere(weaponHitBox.position, attackRange); // �rea circular del rango de ataque
+        Gizmos.color = Color.red; // Màu sắc của Gizmo
+        Gizmos.DrawWireSphere(weaponHitBox.position, attackRange); // Vẽ một vòng tròn thể hiện phạm vi tấn công
     }
 
-    //public void setHitKey(KeyCode hitKey)
-    //{
-    //    this.hitKey = hitKey;
-    //}
-
-    //public void setKickKey(KeyCode kickKey)
-    //{
-    //    this.kickKey = kickKey;
-    //}
-
-    //public void setSpecialPowerKey(KeyCode specialPowerKey)
-    //{
-    //    this.specialPowerKey = specialPowerKey;
-    //}
-
-    //public void setHitDamage(float hitDamageFromPersonaje)
-    //{
-    //    hitDamage = hitDamageFromPersonaje;
-    //}
-
-    //public void setKickDamage(float kickDamageFromPersonaje)
-    //{
-    //    kickDamage = kickDamageFromPersonaje;
-    //}
-
-    //public void setSpecialPowerDamage(float specialPowerDamageFromPersonaje)
-    //{
-    //    specialPowerDamage = specialPowerDamageFromPersonaje;
-    //}
-
-    //public void setHitDamageToShield(float hitDamageToShieldFromPersonaje)
-    //{
-    //    hitDamageToShield = hitDamageToShieldFromPersonaje;
-    //}
-
-    //public void setKickDamageToShield(float kickDamageToShieldFromPersonaje)
-    //{
-    //    kickDamageToShield = kickDamageToShieldFromPersonaje;
-    //}
-
-    //public void setWaitingTimeHit(float waitingTimeHitFromPersonaje)
-    //{
-    //    waitingTimeHit = waitingTimeHitFromPersonaje;
-    //}
-
-    //public void setWaitingTimeKick(float waitingTimeKickFromPersonaje)
-    //{
-    //    waitingTimeKick = waitingTimeKickFromPersonaje;
-    //}
-
-    //public void setAttackRange(float attackRangeFromPersonaje)
-    //{
-    //    attackRange = attackRangeFromPersonaje;
-    //}
-
-    //public void setAttackRate(float attackRateFromPersonaje)
-    //{
-    //    attackRate = attackRateFromPersonaje;
-    //}
+  
 }

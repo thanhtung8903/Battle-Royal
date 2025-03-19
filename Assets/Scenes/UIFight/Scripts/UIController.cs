@@ -1,16 +1,16 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    // Referencias a los elementos visuales de la UI
+    // Tham chiếu đến các phần tử giao diện người dùng (UI)
     [Header("UI Elements")]
     [SerializeField] private Image healthBarFill;
     [SerializeField] private List<Image> lives;
     [SerializeField] private Image specialBarFill;
 
-    // Actualiza la barra de salud
+    // Cập nhật thanh máu
     public void updateHealthBar(float currentHealth, float maxHealth)
     {
         if (healthBarFill != null)
@@ -19,7 +19,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    // Actualiza las vidas restantes
+    // Cập nhật số mạng còn lại
     public void updateLives(int livesRemaining)
     {
         for (int i = 0; i < lives.Count; i++)
@@ -28,7 +28,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    // Actualiza la barra de carga del ataque especial
+    // Cập nhật thanh nạp chiêu đặc biệt
     public void updateSpecialBar(float currentCharge, float maxCharge)
     {
         if (specialBarFill != null)
@@ -37,7 +37,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    // M�todos para asignar referencias desde otros scripts
+    // Các phương thức để gán tham chiếu từ các script khác
     public void setHealthBarFill(Image healthBar)
     {
         this.healthBarFill = healthBar;

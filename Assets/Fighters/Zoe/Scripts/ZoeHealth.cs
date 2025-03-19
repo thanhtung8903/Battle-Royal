@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 
 public class ZoeHealth : MonoBehaviour, Damageable
 {
-    public Animator animator; // Referencia al Animator para reproducir animaciones de ataque
+    public Animator animator; // Tham chiếu đến Animator để phát hoạt ảnh tấn công
     public float currentHealth;
     public float maxHealth;
     public int livesRemaining;
@@ -43,7 +43,7 @@ public class ZoeHealth : MonoBehaviour, Damageable
 
         rigidBody2D = GetComponent<Rigidbody2D>();
 
-        // Guarda las restricciones originales del Rigidbody
+        // Lưu lại các ràng buộc ban đầu của Rigidbody
         originalConstraints = rigidBody2D.constraints;
     }
 
@@ -77,21 +77,11 @@ public class ZoeHealth : MonoBehaviour, Damageable
             animator.SetTrigger("die");
 
             StartCoroutine(WaitForDeathAnimation());
-
-            //if (livesRemaining == 0)
-            //{
-            //    die();
-            //}
-            //else
-            //{
-            //    respawn();
-
-            //}
         }
         updateUI();
     }
 
-    // Este m�todo se ejecuta al final de la animaci�n de muerte
+    // Phương thức này được thực thi khi hoạt ảnh chết kết thúc
     public void OnDeathAnimationComplete()
     {
         if (livesRemaining <= 0)
@@ -106,10 +96,10 @@ public class ZoeHealth : MonoBehaviour, Damageable
             specialAttack.enabled = true;
             attack.enabled = true;
             movement.enabled = true;
-            // Restaura las restricciones originales
+            // Khôi phục lại các ràng buộc ban đầu
             rigidBody2D.constraints = originalConstraints;
 
-            // Corrige ligeramente la posici�n para forzar el recalculo de colisiones
+            // Điều chỉnh vị trí để đảm bảo va chạm được cập nhật
             rigidBody2D.position = new Vector2(rigidBody2D.position.x, rigidBody2D.position.y + 0.01f);
             animator.SetBool("isDead", false);
         }
@@ -121,17 +111,16 @@ public class ZoeHealth : MonoBehaviour, Damageable
 
         startRigidbody2D.simulated = false;
 
-        // Hace que el jugador sea invisible temporalmente (usando scale)
+        // Làm cho nhân vật tạm thời vô hình (bằng cách chỉnh scale)
         transform.localScale = Vector3.zero;
 
-        // Restablece la posici�n inicial del jugador
+        // Đặt lại vị trí ban đầu của nhân vật
         transform.position = startPosition;
 
-        // Restaurar la orientaci�n basada en `facingRight`
+        // Khôi phục hướng di chuyển dựa trên `facingRight`
         if (userConfiguration != null)
         {
             userConfiguration.setFacingRight(userConfiguration.getFacingRight());
-            //AlienMovement.setFacingRight(AlienMovement.GetFacingRight());
         }
         transform.localScale = originalLocalScale;
         startRigidbody2D.simulated = true;
@@ -146,24 +135,21 @@ public class ZoeHealth : MonoBehaviour, Damageable
 
     private IEnumerator WaitForDeathAnimation()
     {
-        // Espera hasta que la animaci�n de muerte est� activa
+        // Chờ đến khi hoạt ảnh chết đang chạy
         while (!animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
         {
-            yield return null; // Espera un frame
+            yield return null; // Chờ một frame
         }
 
-        // Obt�n la duraci�n de la animaci�n actual
+        // Lấy thời gian chạy của hoạt ảnh hiện tại
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         float animationDuration = stateInfo.length - 0.3f;
 
-        // Espera la duraci�n de la animaci�n
+        // Chờ thời gian tương ứng với hoạt ảnh
         yield return new WaitForSeconds(animationDuration);
 
-        // Llama a OnDeathAnimationComplete despu�s de la animaci�n
+        // Gọi OnDeathAnimationComplete sau khi hoạt ảnh kết thúc
         OnDeathAnimationComplete();
     }
-    //public void setMaxHealth(float healthFromPersonaje)
-    //{
-    //    maxHealth = healthFromPersonaje;
-    //}
+   
 }
