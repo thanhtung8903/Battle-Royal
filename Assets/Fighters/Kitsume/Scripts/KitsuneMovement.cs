@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class KitsuneMovement : MonoBehaviour
 {
-    // Atributos modificables para cada luchador
-    public float speed; // Diferente para cada nuevo luchador
-    public float jumpForce; // Diferente para cada nuevo luchador
+    // Thuộc tính có thể thay đổi cho từng đấu sĩ
+    public float speed; // Khác nhau cho từng đấu sĩ
+    public float jumpForce; // Khác nhau cho từng đấu sĩ
 
     // Atributos modificables en base al player 1 o player 2
     //public KeyCode jumpKey; // Asignar teclas a cada jugador
@@ -14,7 +14,7 @@ public class KitsuneMovement : MonoBehaviour
     //public bool facingRight; // Orientaci�n inicial basada en el jugador
     //public string axis; // Eje horizontal del jugador
 
-    // Atributos comunes a todos los luchadores
+    // Thuộc tính chung cho tất cả các đấu sĩ
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius;
@@ -24,10 +24,10 @@ public class KitsuneMovement : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public Transform weaponHitBox;
 
-    // Atributos para sonidos
+    // Thuộc tính cho âm thanh
     [SerializeField] private AudioClip soundJump;
 
-    // Atributos para plataformas
+    // Thuộc tính cho nền tảng
     private GameObject currentOneWayPlatform;
     private int fighterLayer;
     private CapsuleCollider2D playerCollider;
@@ -60,22 +60,22 @@ public class KitsuneMovement : MonoBehaviour
         HandlePlatformDrop();
         animator.SetBool("isJumping", !isGrounded);
 
-        // Revisar si se presiona la tecla del ataque especial
+        // Kiểm tra nếu nhấn phím tấn công đặc biệt
         if (Input.GetKeyDown(userConfiguration.getSpecialPowerKey()))
         {
-            // Activar ataque especial
-            KitsuneSpecialAttack.useSpecialAttack(); // Referencia al ataque especial
+            // Kích hoạt tấn công đặc biệt
+            KitsuneSpecialAttack.useSpecialAttack(); // Tham chiếu đến tấn công đặc biệt
         }
     }
 
     private void HandleMovement()
     {
-        // Movimiento horizontal
+        // Di chuyển theo trục ngang
         float moveX = Input.GetAxis(userConfiguration.getAxis());
         rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
         animator.SetFloat("speed", Mathf.Abs(moveX * speed));
 
-        // Cambiar orientación del sprite dependiendo de `facingRight`
+        // Thay đổi hướng sprite dựa vào `facingRight`
         if (moveX > 0 && !userConfiguration.getFacingRight())
         {
             Flip();
@@ -89,7 +89,7 @@ public class KitsuneMovement : MonoBehaviour
 
     private void HandleJump()
     {
-        // Detectar si est� en el suelo
+        // Kiểm tra nếu đang đứng trên mặt đất
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
 
@@ -119,10 +119,10 @@ public class KitsuneMovement : MonoBehaviour
     {
         userConfiguration.setFacingRight(!userConfiguration.getFacingRight());
 
-        // Cambiar la orientaci�n del sprite
+        // Đảo hướng sprite
         spriteRenderer.flipX = !spriteRenderer.flipX;
 
-        // Invertir la posici�n X del weaponHitBox
+        // Đảo vị trí X của weaponHitBox
         if (weaponHitBox != null)
         {
             Vector3 localPosition = weaponHitBox.localPosition;
@@ -134,7 +134,7 @@ public class KitsuneMovement : MonoBehaviour
             groundCheck.localPosition = localPositionGroundChekc;
         }
 
-        // Invertir el CapsuleCollider2D
+        // Đảo CapsuleCollider2D
         if (playerCollider != null)
         {
             Vector2 offset = playerCollider.offset;
@@ -178,14 +178,14 @@ public class KitsuneMovement : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        // Visualizar el �rea de detecci�n del suelo en el editor
+        // Hiển thị khu vực kiểm tra mặt đất trong trình chỉnh sửa
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
 
     public void InitializeFacingDirection()
     {
-        // Ajustar el sprite y componentes según el valor inicial de facingRight
+        // Điều chỉnh sprite và các thành phần dựa vào hướng ban đầu
         if (!userConfiguration.getFacingRight())
         {
             spriteRenderer.flipX = true;
