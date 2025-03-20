@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,10 +19,10 @@ public class SwipeController : MonoBehaviour, IEndDragHandler
     {
         currentPage = 1;
 
-        // Verifica que levelPagesRect no sea nulo para evitar errores
+        // Kiểm tra xem levelPagesRect có bị null không để tránh lỗi
         if (levelPagesRect == null)
         {
-            Debug.LogError("El campo 'levelPagesRect' no est� asignado en el Inspector.");
+            Debug.LogError("Trường 'levelPagesRect' chưa được gán trong Inspector.");
             return;
         }
 
@@ -67,8 +67,8 @@ public class SwipeController : MonoBehaviour, IEndDragHandler
 
     void MovePage()
     {
-        // Uso correcto de LeanTween con gameObject
+        // Sử dụng LeanTween đúng cách với gameObject
         LeanTween.moveLocal(levelPagesRect.gameObject, targetPos, tweenTime).setEase(tweenType);
     }
-   
+
 }

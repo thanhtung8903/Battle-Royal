@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject gameOverUI; // Giao diện hiển thị khi trò chơi kết thúc
     [SerializeField] private AudioClip knockoutVoice; // Âm thanh khi có knockout
     [SerializeField] private GameObject puaseUI; // Giao diện tạm dừng
-    [SerializeField] private KeyCode pauseKey = KeyCode.Escape; // Phím tạm dừng (mặc định là P)
+    [SerializeField] private KeyCode pauseKey = KeyCode.Escape; // Phím tạm dừng 
 
     [SerializeField] private AudioClip fighterSelectionAudio; // Âm thanh trong menu chọn nhân vật
 
