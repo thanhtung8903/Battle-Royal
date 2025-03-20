@@ -1,17 +1,17 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 
 public class ZoeHealth : MonoBehaviour, Damageable
 {
-    public Animator animator; // Referencia al Animator para reproducir animaciones de ataque
-    public float currentHealth;
-    public float maxHealth;
-    public int livesRemaining;
+    public Animator animator; // Tham chiếu đến Animator để phát hoạt ảnh tấn công
+    public float currentHealth; // Máu hiện tại
+    public float maxHealth; // Máu tối đa
+    public int livesRemaining; // Số mạng còn lại
 
-    private Vector2 startPosition;
+    private Vector2 startPosition; // Vị trí bắt đầu
     private Rigidbody2D startRigidbody2D;
-    private Vector3 originalLocalScale;
+    private Vector3 originalLocalScale; // Tỷ lệ gốc của nhân vật
     private ZoeMovement movement;
     private ZoeAttack attack;
     private ZoeShield shield;
@@ -21,19 +21,19 @@ public class ZoeHealth : MonoBehaviour, Damageable
     private UserConfiguration userConfiguration;
     private UIController UIController;
 
-    [SerializeField] private AudioClip soundHurt;
+    [SerializeField] private AudioClip soundHurt; // Âm thanh khi bị tấn công
 
     private void Start()
     {
         animator = GetComponent<Animator>();
         UIController = GetComponent<UIController>();
-        livesRemaining = UIController.getNumberOfLives();
+        livesRemaining = UIController.getNumberOfLives(); // Lấy số mạng từ UI
 
-        currentHealth = maxHealth;
+        currentHealth = maxHealth; // Bắt đầu với lượng máu tối đa
 
-        startPosition = transform.position;
+        startPosition = transform.position; // Lưu vị trí ban đầu của nhân vật
         startRigidbody2D = GetComponent<Rigidbody2D>();
-        originalLocalScale = transform.localScale;
+        originalLocalScale = transform.localScale; // Lưu tỷ lệ gốc
 
         movement = GetComponent<ZoeMovement>();
         attack = GetComponent<ZoeAttack>();
@@ -43,21 +43,21 @@ public class ZoeHealth : MonoBehaviour, Damageable
 
         rigidBody2D = GetComponent<Rigidbody2D>();
 
-        // Guarda las restricciones originales del Rigidbody
+        // Lưu trạng thái ràng buộc ban đầu của Rigidbody
         originalConstraints = rigidBody2D.constraints;
     }
 
     void updateUI()
     {
-        UIController.updateHealthBar(currentHealth, maxHealth);
-        UIController.updateLives(livesRemaining);
+        UIController.updateHealthBar(currentHealth, maxHealth); // Cập nhật thanh máu
+        UIController.updateLives(livesRemaining); // Cập nhật số mạng còn lại
     }
 
     public void decreaseLife(float damage)
     {
         currentHealth -= damage;
         SoundsController.Instance.RunSound(soundHurt);
-        animator.SetTrigger("hurt");
+        animator.SetTrigger("hurt"); // Kích hoạt hoạt ảnh bị tấn công
 
         if (currentHealth <= 0)
         {
@@ -67,49 +67,39 @@ public class ZoeHealth : MonoBehaviour, Damageable
             attack.enabled = false;
             movement.enabled = false;
 
-            livesRemaining--;
+            livesRemaining--; // Giảm số mạng
 
             if (livesRemaining > 0)
             {
-                currentHealth = maxHealth;
+                currentHealth = maxHealth; // Nếu còn mạng, hồi đầy máu
             }
-            //animator.SetBool("isDead", true);
-            animator.SetTrigger("die");
+            animator.SetTrigger("die"); // Kích hoạt hoạt ảnh chết
 
             StartCoroutine(WaitForDeathAnimation());
 
-            //if (livesRemaining == 0)
-            //{
-            //    die();
-            //}
-            //else
-            //{
-            //    respawn();
-
-            //}
-        }
-        updateUI();
+        } 
+        updateUI(); // Cập nhật UI
     }
 
-    // Este m�todo se ejecuta al final de la animaci�n de muerte
+    // Hàm này sẽ được gọi khi hoạt ảnh chết hoàn tất
     public void OnDeathAnimationComplete()
     {
         if (livesRemaining <= 0)
         {
-            die();
+            die(); // Hết mạng => chết hoàn toàn
         }
         else
         {
             currentHealth = maxHealth;
-            respawn();
+            respawn(); 
             //currentHealth = maxHealth;
             specialAttack.enabled = true;
             attack.enabled = true;
             movement.enabled = true;
-            // Restaura las restricciones originales
+            // Khôi phục ràng buộc ban đầu
             rigidBody2D.constraints = originalConstraints;
 
-            // Corrige ligeramente la posici�n para forzar el recalculo de colisiones
+            // Điều chỉnh nhẹ vị trí để buộc hệ thống va chạm cập nhật
             rigidBody2D.position = new Vector2(rigidBody2D.position.x, rigidBody2D.position.y + 0.01f);
             animator.SetBool("isDead", false);
         }
@@ -119,51 +109,46 @@ public class ZoeHealth : MonoBehaviour, Damageable
     private void respawn()
     {
 
-        startRigidbody2D.simulated = false;
+        startRigidbody2D.simulated = false; // Tắt vật lý của nhân vật
 
-        // Hace que el jugador sea invisible temporalmente (usando scale)
+        // Làm nhân vật vô hình tạm thời (bằng scale)
         transform.localScale = Vector3.zero;
 
-        // Restablece la posici�n inicial del jugador
+        // Đặt lại vị trí ban đầu
         transform.position = startPosition;
 
-        // Restaurar la orientaci�n basada en `facingRight`
+        // Khôi phục hướng di chuyển dựa vào `facingRight`
         if (userConfiguration != null)
         {
             userConfiguration.setFacingRight(userConfiguration.getFacingRight());
-            //AlienMovement.setFacingRight(AlienMovement.GetFacingRight());
         }
-        transform.localScale = originalLocalScale;
-        startRigidbody2D.simulated = true;
+        transform.localScale = originalLocalScale;  // Khôi phục kích thước gốc
+        startRigidbody2D.simulated = true;  // Bật lại vật lý của nhân vật
     }
 
     private void die()
     {
         Debug.Log("Player " + gameObject.layer.ToString());
-        GameManager.gameManagerInstance.enableGameOverPanel(gameObject.tag);
-        Destroy(gameObject);
+        GameManager.gameManagerInstance.enableGameOverPanel(gameObject.tag); // Hiển thị bảng Game Over
+        Destroy(gameObject); // Xóa nhân vật
     }
 
     private IEnumerator WaitForDeathAnimation()
     {
-        // Espera hasta que la animaci�n de muerte est� activa
+        // Chờ cho đến khi hoạt ảnh chết được kích hoạt
         while (!animator.GetCurrentAnimatorStateInfo(0).IsName("Die"))
         {
-            yield return null; // Espera un frame
+            yield return null; // Chờ một frame
         }
 
-        // Obt�n la duraci�n de la animaci�n actual
+        // Lấy thời gian của hoạt ảnh hiện tại
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         float animationDuration = stateInfo.length - 0.3f;
 
-        // Espera la duraci�n de la animaci�n
+        // Chờ thời gian bằng thời lượng của hoạt ảnh
         yield return new WaitForSeconds(animationDuration);
 
-        // Llama a OnDeathAnimationComplete despu�s de la animaci�n
+        // Gọi hàm hoàn tất sau khi hoạt ảnh kết thúc
         OnDeathAnimationComplete();
     }
-    //public void setMaxHealth(float healthFromPersonaje)
-    //{
-    //    maxHealth = healthFromPersonaje;
-    //}
 }

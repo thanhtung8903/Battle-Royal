@@ -1,44 +1,44 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class ZoeSpecialAttack : MonoBehaviour
 {
-    public float specialCharge = 0f; // Carga actual de la barra (inicia en 0).
-    public float maxCharge; // Carga m�xima para activar el ataque especial.
+    public float specialCharge = 0f;  // Lượng nạp hiện tại của thanh đặc biệt (bắt đầu từ 0).
+    public float maxCharge; // Lượng nạp tối đa để kích hoạt đòn tấn công đặc biệt.
 
-    private bool isReady = false; // Indica si el ataque especial est� listo.
-    private UIController UIController; // Referencia al controlador de la UI.
+    private bool isReady = false; // Biến kiểm tra xem đòn tấn công đặc biệt đã sẵn sàng hay chưa.
+    private UIController UIController; // Tham chiếu đến bộ điều khiển giao diện người dùng (UI).
 
-    public float specialPowerDamage;
-    public float specialPowerDamageToShield;
-    public Animator animator; // Referencia al Animator para reproducir animaciones de ataque
+    public float specialPowerDamage; // Lượng sát thương của đòn đặc biệt.
+    public float specialPowerDamageToShield; // Lượng sát thương gây lên khiên của đối thủ.
+    public Animator animator; // Tham chiếu đến Animator để phát hoạt ảnh tấn công.
     private ZoeAttack attack;
 
-    // Configuraci�n para el poder especial con las bolas
-    public GameObject ballPrefab; // Prefab de la bola
-    public int ballCount = 20; // N�mero de bolas en el c�rculo
-    public float expansionSpeed = 5f; // Velocidad de expansi�n del c�rculo
-    public int bursts = 3; // N�mero de r�fagas
-    public float timeBetweenBursts = 0.5f; // Tiempo entre r�fagas
+    // Cấu hình cho đòn tấn công đặc biệt với các quả cầu năng lượng.
+    public GameObject ballPrefab; // Prefab của quả cầu năng lượng.
+    public int ballCount = 20; // Số lượng quả cầu xuất hiện theo vòng tròn.
+    public float expansionSpeed = 5f; // Tốc độ mở rộng của vòng tròn quả cầu.
+    public int bursts = 3; // Số lần phóng quả cầu.
+    public float timeBetweenBursts = 0.5f; // Khoảng thời gian giữa các lần phóng.
 
-    [SerializeField] private AudioClip soundSpecialAttack1;
+    [SerializeField] private AudioClip soundSpecialAttack1; // Âm thanh của đòn tấn công đặc biệt.
 
     private void Start()
     {
         UIController = GetComponent<UIController>();
-        attack = GetComponent<ZoeAttack>(); // Inicializar attack.
+        attack = GetComponent<ZoeAttack>(); // Khởi tạo biến attack.
         updateUI();
     }
 
-    // M�todo que aumenta la barra de carga.
+    // Phương thức tăng lượng nạp của thanh đặc biệt.
     public void increaseCharge(float amount)
     {
-        if (!isReady) // Si el ataque especial no est� listo, cargar la barra.
+        if (!isReady) // Nếu đòn tấn công đặc biệt chưa sẵn sàng, tiếp tục nạp thanh đặc biệt.
         {
             specialCharge += amount;
-            specialCharge = Mathf.Clamp(specialCharge, 0, maxCharge); // Asegurarse de que no pase de 100.
+            specialCharge = Mathf.Clamp(specialCharge, 0, maxCharge); // Đảm bảo giá trị không vượt quá maxCharge.
 
-            if (specialCharge >= maxCharge) // Si la barra est� llena, marcar como listo.
+            if (specialCharge >= maxCharge) // Khi thanh nạp đầy, đánh dấu là đã sẵn sàng.
             {
                 isReady = true;
                 Debug.Log("Special Attack Ready!");
@@ -48,14 +48,14 @@ public class ZoeSpecialAttack : MonoBehaviour
         }
     }
 
-    // M�todo para usar el ataque especial.
+    // Phương thức sử dụng đòn tấn công đặc biệt.
     public void useSpecialAttack()
     {
-        if (isReady) // Solo se puede usar si est� completamente cargada.
+        if (isReady)  // Chỉ có thể sử dụng nếu thanh đặc biệt đã được nạp đầy.
         {
             Debug.Log("Special Attack Activated!");
-            performSpecialAttack(); // Aqu� colocas la l�gica del ataque especial.
-            specialCharge = 0f; // Reiniciar la barra.
+            performSpecialAttack(); // Gọi đến hàm thực hiện đòn tấn công đặc biệt.
+            specialCharge = 0f; // Đặt lại thanh nạp về 0.
             isReady = false;
             updateUI();
         }
@@ -65,18 +65,18 @@ public class ZoeSpecialAttack : MonoBehaviour
     {
         special();
         Debug.Log("Performing the special attack!");
-        // La r�faga ser� activada por un Animation Event al final de la animaci�n especial.
+        // Việc phóng các quả cầu sẽ được kích hoạt bằng Animation Event khi kết thúc hoạt ảnh đặc biệt.
     }
 
     private void special()
     {
-        // Activa la animaci�n de ataque
+        // Kích hoạt hoạt ảnh tấn công đặc biệt.
         SoundsController.Instance.RunSound(soundSpecialAttack1);
         animator.SetTrigger("special");
         attack.applyDamageToEnemies(specialPowerDamage, specialPowerDamageToShield);
     }
 
-    // Este m�todo se llamar� al finalizar la animaci�n "special" usando un Animation Event.
+    // Phương thức này sẽ được gọi khi hoạt ảnh "special" kết thúc thông qua Animation Event.
     private void OnSpecialAnimationEnd()
     {
         StartCoroutine(GenerateBursts());
@@ -87,30 +87,30 @@ public class ZoeSpecialAttack : MonoBehaviour
         animator.SetTrigger("balls");
         for (int i = 0; i < bursts; i++)
         {
-            GenerateCircle();
-            yield return new WaitForSeconds(timeBetweenBursts);
+            GenerateCircle(); // Tạo vòng tròn quả cầu năng lượng.
+            yield return new WaitForSeconds(timeBetweenBursts); // Chờ một khoảng thời gian giữa các lần phóng.
         }
     }
 
     private void GenerateCircle()
     {
-        float angleIncrement = 360f / ballCount;
+        float angleIncrement = 360f / ballCount;  // Góc giữa mỗi quả cầu trong vòng tròn.
 
         for (int i = 0; i < ballCount; i++)
         {
-            // Calcula el �ngulo de cada bola
+            // Tính toán góc cho mỗi quả cầu.
             float angle = i * angleIncrement * Mathf.Deg2Rad;
 
-            // Genera la posici�n inicial en el centro del personaje
+            // Vị trí khởi đầu ở trung tâm nhân vật.
             Vector2 initialPosition = transform.position;
 
-            // Crea la direcci�n radial basada en el �ngulo
+            // Xác định hướng tỏa ra theo góc tính toán.
             Vector2 radialDirection = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
 
-            // Instancia la bola en el centro del personaje
+            // Tạo một quả cầu mới ở trung tâm nhân vật.
             GameObject ball = Instantiate(ballPrefab, initialPosition, Quaternion.identity);
 
-            // Inicializa la bola para que se mueva radialmente hacia afuera
+            // Thiết lập quả cầu để nó di chuyển tỏa ra từ trung tâm.
             ball.GetComponent<BallMovement>().setUserTag(gameObject.tag);
             ball.GetComponent<BallMovement>().Initialize(radialDirection, expansionSpeed);
         }
