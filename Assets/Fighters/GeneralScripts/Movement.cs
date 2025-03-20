@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    // Atributos modificables para cada luchador
-    public float speed; // Diferente para cada nuevo luchador
-    public float jumpForce; // Diferente para cada nuevo luchador
+    // Các thuộc tính có thể điều chỉnh cho mỗi đấu sĩ
+    public float speed; // Tốc độ khác nhau cho từng đấu sĩ
+    public float jumpForce; // Lực nhảy khác nhau cho từng đấu sĩ
 
     // Atributos modificables en base al player 1 o player 2
     //public KeyCode jumpKey; // Asignar teclas a cada jugador
@@ -14,7 +14,7 @@ public class Movement : MonoBehaviour
     //public bool facingRight; // Orientaci�n inicial basada en el jugador
     //public string axis; // Eje horizontal del jugador
 
-    // Atributos comunes a todos los luchadores
+    // Các thuộc tính chung cho tất cả đấu sĩ
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius;
@@ -24,10 +24,10 @@ public class Movement : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     public Transform weaponHitBox;
 
-    // Atributos para sonidos
+    // Thuộc tính âm thanh
     [SerializeField] private AudioClip soundJump;
 
-    // Atributos para plataformas
+    // Thuộc tính liên quan đến nền tảng
     private GameObject currentOneWayPlatform;
     private int fighterLayer;
     private CapsuleCollider2D playerCollider;
@@ -60,12 +60,12 @@ public class Movement : MonoBehaviour
 
     private void HandleMovement()
     {
-        // Movimiento horizontal
+        // Di chuyển theo trục ngang
         float moveX = Input.GetAxis(userConfiguration.getAxis());
         rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
         animator.SetFloat("speed", Mathf.Abs(moveX * speed));
-        
-        // Cambiar orientación del sprite dependiendo de `facingRight`
+
+        // Thay đổi hướng của sprite dựa trên `facingRight`
         if (moveX > 0 && !userConfiguration.getFacingRight())
         {
             Flip();
@@ -79,7 +79,7 @@ public class Movement : MonoBehaviour
 
     private void HandleJump()
     {
-        // Detectar si est� en el suelo
+        // Kiểm tra nếu đang ở trên mặt đất
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         
 
@@ -109,10 +109,10 @@ public class Movement : MonoBehaviour
     {
         userConfiguration.setFacingRight(!userConfiguration.getFacingRight());
 
-        // Cambiar la orientaci�n del sprite
+        // Đảo ngược sprite
         spriteRenderer.flipX = !spriteRenderer.flipX;
 
-        // Invertir la posici�n X del weaponHitBox
+        // Đảo ngược vị trí X của weaponHitBox
         if (weaponHitBox != null)
         {
             Vector3 localPosition = weaponHitBox.localPosition;
@@ -120,7 +120,7 @@ public class Movement : MonoBehaviour
             weaponHitBox.localPosition = localPosition;
         }
 
-        // Invertir el CapsuleCollider2D
+        // Đảo ngược vị trí của CapsuleCollider2D
         if (playerCollider != null)
         {
             Vector2 offset = playerCollider.offset;
@@ -164,14 +164,14 @@ public class Movement : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        // Visualizar el �rea de detecci�n del suelo en el editor
+        // Hiển thị khu vực kiểm tra mặt đất trong cửa sổ Scene
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
 
     public void InitializeFacingDirection()
     {
-        // Ajustar el sprite y componentes según el valor inicial de facingRight
+        // Điều chỉnh sprite và các thành phần khác dựa trên hướng ban đầu
         if (!userConfiguration.getFacingRight())
         {
             spriteRenderer.flipX = true;

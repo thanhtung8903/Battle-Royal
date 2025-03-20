@@ -1,13 +1,13 @@
-using Unity.VisualScripting;
+﻿using Unity.VisualScripting;
 using UnityEngine;
 
 public class SpecialAttack : MonoBehaviour
 {
-    public float specialCharge = 0f; // Carga actual de la barra (inicia en 0).
-    public float maxCharge; // Carga m�xima para activar el ataque especial.
+    public float specialCharge = 0f; // Lượng nạp hiện tại của thanh kỹ năng đặc biệt (bắt đầu từ 0).
+    public float maxCharge; // Lượng nạp tối đa để kích hoạt kỹ năng đặc biệt.
 
-    private bool isReady = false; // Indica si el ataque especial est� listo.
-    private UIController UIController; // Referencia al controlador de la UI.
+    private bool isReady = false; // Biến kiểm tra xem kỹ năng đặc biệt đã sẵn sàng chưa.
+    private UIController UIController; // Tham chiếu đến bộ điều khiển giao diện người dùng (UI).
 
     private void Start()
     {
@@ -16,15 +16,15 @@ public class SpecialAttack : MonoBehaviour
         
     }
 
-    // M�todo que aumenta la barra de carga.
+    // Phương thức tăng lượng nạp của thanh kỹ năng đặc biệt.
     public void increaseCharge(float amount)
     {
-        if (!isReady) // Si el ataque especial no est� listo, cargar la barra.
+        if (!isReady) // Nếu kỹ năng chưa sẵn sàng, tiếp tục nạp.
         {
             specialCharge += amount;
-            specialCharge = Mathf.Clamp(specialCharge, 0, maxCharge); // Asegurarse de que no pase de 100.
+            specialCharge = Mathf.Clamp(specialCharge, 0, maxCharge); // Đảm bảo không vượt quá giới hạn tối đa.
 
-            if (specialCharge >= maxCharge) // Si la barra est� llena, marcar como listo.
+            if (specialCharge >= maxCharge)  // Khi thanh nạp đầy, đánh dấu là đã sẵn sàng.
             {
                 isReady = true;
                 Debug.Log("Special Attack Ready!");
@@ -34,14 +34,14 @@ public class SpecialAttack : MonoBehaviour
         }
     }
 
-    // M�todo para usar el ataque especial.
+    // Phương thức kích hoạt kỹ năng đặc biệt.
     public void useSpecialAttack()
     {
-        if (isReady) // Solo se puede usar si est� completamente cargada.
+        if (isReady) // Chỉ có thể sử dụng khi đã được nạp đầy.
         {
             Debug.Log("Special Attack Activated!");
-            performSpecialAttack(); // Aqu� colocas la l�gica del ataque especial.
-            specialCharge = 0f; // Reiniciar la barra.
+            performSpecialAttack(); // Gọi phương thức thực hiện kỹ năng đặc biệt.
+            specialCharge = 0f; // Đặt lại thanh nạp về 0.
             isReady = false;
             updateUI();
         }

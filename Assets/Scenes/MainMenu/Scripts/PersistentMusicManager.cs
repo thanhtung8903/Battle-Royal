@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
@@ -6,34 +6,34 @@ public class MenuMusicManager : MonoBehaviour
 {
     public static MenuMusicManager Instance { get; private set; }
 
-    [Header("Clips de M�sica")]
-    [SerializeField] private AudioClip menuMusic; // M�sica compartida entre las tres escenas
-    [SerializeField] private AudioClip knockOutAudio;
+    [Header("Clips de Música")]
+    [SerializeField] private AudioClip menuMusic; // Nhạc dùng chung giữa ba cảnh
+    [SerializeField] private AudioClip knockOutAudio; // Âm thanh khi bị hạ gục
 
     [Header("Componentes")]
-    [SerializeField] private AudioSource audioSource; // AudioSource que reproducir� la m�sica
+    [SerializeField] private AudioSource audioSource; // AudioSource dùng để phát nhạc
 
-    
+
     private void Awake()
     {
-        // Verifica si ya existe una instancia
+        // Kiểm tra xem đã có một phiên bản tồn tại chưa
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject); // Destruir duplicados
+            Destroy(gameObject); // Xóa các bản sao thừa
             return;
         }
 
-        // Hacer persistente entre escenas
+        // Giữ đối tượng này không bị hủy khi chuyển cảnh
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Configurar el AudioSource si no est� asignado
+        // Cấu hình AudioSource nếu chưa được gán
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.loop = true; // Hacer que la m�sica se repita
+            audioSource.loop = true; // Đặt nhạc chạy lặp lại
         }
-
+        // Nếu đang ở màn hình chính, phát âm thanh knock-out trước rồi phát nhạc menu
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
             StartCoroutine(PlayKnockoutThenMenuMusic());
@@ -47,10 +47,10 @@ public class MenuMusicManager : MonoBehaviour
     private IEnumerator PlayKnockoutThenMenuMusic()
     {
         audioSource.clip = knockOutAudio;
-        audioSource.loop = false; // Se asegura de que solo se reproduzca una vez
+        audioSource.loop = false; // Đảm bảo chỉ phát một lần
         audioSource.Play();
 
-        yield return new WaitForSeconds(knockOutAudio.length); // Esperar a que termine el audio
+        yield return new WaitForSeconds(knockOutAudio.length); // Chờ cho âm thanh phát hết
 
         PlayMenuMusic();
     }
@@ -62,9 +62,6 @@ public class MenuMusicManager : MonoBehaviour
         audioSource.Play();
     }
 
-    /// <summary>
-    /// Reanuda la m�sica si est� detenida.
-    /// </summary>
     public void ResumeMusic()
     {
         if (!audioSource.isPlaying)
@@ -75,7 +72,7 @@ public class MenuMusicManager : MonoBehaviour
 
     public void StopMusic()
     {
-        // Detener la m�sica cuando se cargue una escena de pelea
+        // Dừng nhạc khi một cảnh chiến đấu được tải.
         if (audioSource.isPlaying)
         {
             audioSource.Stop();

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class Shield : MonoBehaviour, Shieldable
@@ -8,12 +8,12 @@ public class Shield : MonoBehaviour, Shieldable
     public SpriteRenderer spriteRenderer;
 
     [Header("Shield Settings")]
-    public float shieldDuration; // Tiempo de recarga si el escudo se desactiva.
-    public float shieldCapacity = 0; // Capacidad del escudo.
-    public float maxShieldCapacity; // Capacidad m�xima del escudo.
-    public float rechargeRate; // Cantidad de recarga por segundo.
-    private bool isShieldActive = false; // Estado del escudo.
-    private bool isRechargingFromZero = false; // Para controlar la recarga tras agotarse.
+    public float shieldDuration; // Thời gian hồi chiêu nếu khiên bị vô hiệu hóa.
+    public float shieldCapacity = 0; // Dung lượng hiện tại của khiên.
+    public float maxShieldCapacity; // Dung lượng tối đa của khiên.
+    public float rechargeRate; // Tốc độ hồi khiên mỗi giây.
+    private bool isShieldActive = false; // Trạng thái khiên (đang bật hay không).
+    private bool isRechargingFromZero = false; // Kiểm soát quá trình hồi khiên từ 0.
 
     //public KeyCode shieldKey = KeyCode.V;
 
@@ -44,7 +44,7 @@ public class Shield : MonoBehaviour, Shieldable
 
         rb = GetComponent<Rigidbody2D>();
 
-        // Guarda las restricciones originales del Rigidbody
+        // Lưu lại trạng thái gốc của Rigidbody
         originalConstraints = rb.constraints;
 
         userConfiguration = GetComponent<UserConfiguration>();
@@ -52,13 +52,13 @@ public class Shield : MonoBehaviour, Shieldable
 
     void Update()
     {
-        // Activa o desactiva el escudo al presionar la tecla "V", solo si no est� recargando desde 0.
+        // Bật hoặc tắt khiên khi nhấn phím "V", chỉ khi không đang hồi lại từ 0.
         if (Input.GetKeyDown(userConfiguration.getShieldKey()) && !isRechargingFromZero)
         {
             ToggleShield();
         }
 
-        // Recarga el escudo si no est� activo y no est� recargando desde 0.
+        // Hồi phục khiên nếu không hoạt động và không đang hồi từ 0.
         if (!isShieldActive && !isRechargingFromZero && shieldCapacity < maxShieldCapacity)
         {
             RechargeShield();
@@ -67,7 +67,7 @@ public class Shield : MonoBehaviour, Shieldable
 
     private void ToggleShield()
     {
-        // Si el escudo est� recargando desde 0, no se puede activar.
+        // Nếu khiên đang hồi từ 0, không thể kích hoạt.
         if (isRechargingFromZero)
         {
             Debug.Log("Shield is recharging from zero and cannot be activated.");
@@ -81,10 +81,10 @@ public class Shield : MonoBehaviour, Shieldable
 
     private void UpdateShieldComponents()
     {
-        // Actualiza la visibilidad y colisi�n del escudo.
+        // Cập nhật trạng thái hiển thị và va chạm của khiên.
         boxCollider2D.enabled = isShieldActive;
         spriteRenderer.enabled = isShieldActive;
-        // Restringir movimiento en X y congelar rotaci�n
+        // Giới hạn chuyển động theo trục X và khóa xoay
         if (isShieldActive)
         {
             rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
@@ -92,10 +92,10 @@ public class Shield : MonoBehaviour, Shieldable
         }
         else
         {
-            // Restaura las restricciones originales
+            // Khôi phục lại trạng thái gốc
             rb.constraints = originalConstraints;
 
-            // Corrige ligeramente la posici�n para forzar el recalculo de colisiones
+            // Điều chỉnh nhẹ vị trí để cập nhật va chạm
             rb.position = new Vector2(rb.position.x, rb.position.y + 0.01f);
 
             Debug.Log("Shield Deactivated");
@@ -104,8 +104,8 @@ public class Shield : MonoBehaviour, Shieldable
 
     private void UpdateScriptStates()
     {
-        // Habilita o deshabilita los scripts seg�n el estado del escudo.
-        bool isActive = !isShieldActive; // Los scripts est�n activos cuando el escudo no est� activo.
+        // Bật hoặc tắt các script dựa trên trạng thái của khiên.
+        bool isActive = !isShieldActive; // Các script chỉ hoạt động khi khiên không được kích hoạt.
         specialAttack.enabled = isActive;
         fighterAttack.enabled = isActive;
         fighterHealth.enabled = isActive;
@@ -153,7 +153,7 @@ public class Shield : MonoBehaviour, Shieldable
     }
 
     /// <summary>
-    /// Devuelve si el escudo est� activo.
+    /// Devuelve si el escudo está activo.
     /// </summary>
     public bool IsShieldActive()
     {

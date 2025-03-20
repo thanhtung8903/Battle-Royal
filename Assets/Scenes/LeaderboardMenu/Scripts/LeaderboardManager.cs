@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Data;
 using Mono.Data.Sqlite;
@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class LeaderboardManager : MonoBehaviour
 {
-    private string dbName = "URI=file:LeaderboardDB.db";
+    private string dbName = "URI=file:LeaderboardDB.db"; 
 
     private List<Leaderboard> leaderboards = new List<Leaderboard>();
 
@@ -132,16 +132,9 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
-    // Esta funci�n es llamada cuando se presiona un bot�n espec�fico
+    // Hàm này được gọi khi nhấn một nút để tải cảnh (scene) mới
     public void LoadSceneByButton(string sceneName)
     {
-        
-        /*// Detener la m�sica si es una escena de pelea
-        if (sceneName != "FighterSelectionMenu")
-        {
-            if (MenuMusicManager.Instance != null)
-                MenuMusicManager.Instance.StopMusic();
-        }*/
 
         SceneManager.LoadScene(sceneName);
     }

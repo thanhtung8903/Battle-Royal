@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Data;
 using Mono.Data.Sqlite;
@@ -9,9 +9,9 @@ using System.Xml.Linq;
 
 public class UserDBManager : MonoBehaviour
 {
-    private string dbName = "URI=file:LeaderboardDB.db";
+    private string dbName = "URI=file:LeaderboardDB.db"; // Đường dẫn đến cơ sở dữ liệu SQLite
 
-    public InputField enterNameUser1;
+    public InputField enterNameUser1; 
     public InputField enterPasswordUser1;
 
     public InputField enterNameUser2;
@@ -36,6 +36,7 @@ public class UserDBManager : MonoBehaviour
 
     }
 
+    // Tạo cơ sở dữ liệu nếu chưa tồn tại
     public void createDB()
     {
         using (var connection = new SqliteConnection(dbName))
@@ -55,6 +56,7 @@ public class UserDBManager : MonoBehaviour
         }
     }
 
+    // Thêm người dùng mới vào cơ sở dữ liệu
     public void addUser(string username, string password)
     {
         using (var connection = new SqliteConnection(dbName))
@@ -71,6 +73,8 @@ public class UserDBManager : MonoBehaviour
             connection.Close();
         }
     }
+
+    // Đăng ký người dùng mới
     public void registerUser(InputField enterNameUser, InputField enterPasswordUser, Text advertisement)
     {
         string username = enterNameUser.text;
@@ -100,18 +104,18 @@ public class UserDBManager : MonoBehaviour
 
     public void loginUser(InputField enterNameUser, InputField enterPasswordUser, string userTag, Text advertisement)
     {
-        string enteredUsername = enterNameUser.text.Trim(); // Elimina espacios en blanco
+        string enteredUsername = enterNameUser.text.Trim(); // Loại bỏ khoảng trắng
         string user1 = PlayerPrefs.GetString("User1", "");
         string user2 = PlayerPrefs.GetString("User2", "");
 
-        // Verificar si los campos est�n vac�os primero
+        // Kiểm tra nếu ô nhập bị bỏ trống
         if (string.IsNullOrEmpty(enteredUsername) || string.IsNullOrEmpty(enterPasswordUser.text))
         {
             ShowMessage(advertisement, "Fields empty", Color.red);
             return;
         }
 
-        // Evitar que detecte un usuario vac�o como "en uso"
+        // Tránh trùng lặp tài khoản khi đăng nhập
         if (((userTag == "User1" && enteredUsername == user2) ||
              (userTag == "User2" && enteredUsername == user1)))
         {
@@ -119,7 +123,7 @@ public class UserDBManager : MonoBehaviour
             return;
         }
 
-        // Validar usuario y contrase�a en la base de datos
+        // Kiểm tra tên đăng nhập và mật khẩu trong cơ sở dữ liệu
         if (validateUser(enteredUsername, enterPasswordUser.text))
         {
             PlayerPrefs.SetString(userTag, enteredUsername);
