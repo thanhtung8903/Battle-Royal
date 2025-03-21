@@ -4,37 +4,37 @@ using UnityEngine;
 
 public class KitsuneMovement : MonoBehaviour
 {
-    // Atributos modificables para cada luchador
-    public float speed; // Diferente para cada nuevo luchador
-    public float jumpForce; // Diferente para cada nuevo luchador
+    // Thuộc tính có thể điều chỉnh cho mỗi nhân vật
+    public float speed; // Khác nhau cho mỗi nhân vật mới
+    public float jumpForce; // Khác nhau cho mỗi nhân vật mới
 
-    // Atributos modificables en base al player 1 o player 2
-    //public KeyCode jumpKey; // Asignar teclas a cada jugador
-    //public KeyCode downKey; // Tecla para pasar plataformas
-    //public bool facingRight; // Orientaci�n inicial basada en el jugador
-    //public string axis; // Eje horizontal del jugador
+    // Thuộc tính có thể điều chỉnh dựa trên người chơi 1 hoặc người chơi 2
+    //public KeyCode jumpKey; // Gán phím cho mỗi người chơi
+    //public KeyCode downKey; // Phím để đi qua nền tảng
+    //public bool facingRight; // Hướng ban đầu dựa trên người chơi
+    //public string axis; // Trục ngang của người chơi
 
-    // Atributos comunes a todos los luchadores
-    public LayerMask groundLayer;
-    public Transform groundCheck;
-    public float groundCheckRadius;
-    private bool isGrounded;
+    // Thuộc tính chung cho tất cả các nhân vật
+    public LayerMask groundLayer; // Lớp mặt đất
+    public Transform groundCheck; // Điểm kiểm tra mặt đất
+    public float groundCheckRadius; // Bán kính kiểm tra mặt đất
+    private bool isGrounded; // Kiểm tra xem có đang đứng trên mặt đất không
 
-    private Rigidbody2D rb;
-    private SpriteRenderer spriteRenderer;
-    public Transform weaponHitBox;
+    private Rigidbody2D rb; // Thành phần Rigidbody2D
+    private SpriteRenderer spriteRenderer; // Thành phần SpriteRenderer
+    public Transform weaponHitBox; // Vùng tấn công của vũ khí
 
-    // Atributos para sonidos
-    [SerializeField] private AudioClip soundJump;
+    // Thuộc tính cho âm thanh
+    [SerializeField] private AudioClip soundJump; // Âm thanh nhảy
 
-    // Atributos para plataformas
-    private GameObject currentOneWayPlatform;
-    private int fighterLayer;
-    private CapsuleCollider2D playerCollider;
+    // Thuộc tính cho nền tảng
+    private GameObject currentOneWayPlatform; // Nền tảng một chiều hiện tại
+    private int fighterLayer; // Lớp của nhân vật
+    private CapsuleCollider2D playerCollider; // Collider của người chơi
 
-    private UserConfiguration userConfiguration;
-    private Animator animator;
-    private KitsuneSpecialAttack KitsuneSpecialAttack;
+    private UserConfiguration userConfiguration; // Cấu hình người dùng
+    private Animator animator; // Thành phần Animator
+    private KitsuneSpecialAttack KitsuneSpecialAttack; // Thành phần tấn công đặc biệt
 
     void Start()
     {
@@ -55,27 +55,28 @@ public class KitsuneMovement : MonoBehaviour
 
     void Update()
     {
-        HandleMovement();
-        HandleJump();
-        HandlePlatformDrop();
+        HandleMovement(); // Xử lý di chuyển
+        HandleJump(); // Xử lý nhảy
+        HandlePlatformDrop(); // Xử lý rơi qua nền tảng
         animator.SetBool("isJumping", !isGrounded);
 
-        // Revisar si se presiona la tecla del ataque especial
+        // Kiểm tra nếu phím tấn công đặc biệt được nhấn
         if (Input.GetKeyDown(userConfiguration.getSpecialPowerKey()))
         {
-            // Activar ataque especial
-            KitsuneSpecialAttack.useSpecialAttack(); // Referencia al ataque especial
+            // Kích hoạt tấn công đặc biệt
+            KitsuneSpecialAttack.useSpecialAttack(); // Tham chiếu đến tấn công đặc biệt
         }
     }
 
+    // Xử lý di chuyển
     private void HandleMovement()
     {
-        // Movimiento horizontal
+        // Di chuyển ngang
         float moveX = Input.GetAxis(userConfiguration.getAxis());
         rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
         animator.SetFloat("speed", Mathf.Abs(moveX * speed));
 
-        // Cambiar orientación del sprite dependiendo de `facingRight`
+        // Thay đổi hướng của sprite dựa trên `facingRight`
         if (moveX > 0 && !userConfiguration.getFacingRight())
         {
             Flip();
@@ -86,24 +87,22 @@ public class KitsuneMovement : MonoBehaviour
         }
     }
 
-
+    // Xử lý nhảy
     private void HandleJump()
     {
-        // Detectar si est� en el suelo
+        // Phát hiện nếu đang ở trên mặt đất
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
 
         if (isGrounded && Input.GetKeyDown(userConfiguration.getJumpKey()))
         {
-
             animator.SetBool("isJumping", true);
-            Debug.Log("Jump");
+            Debug.Log("Nhảy");
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             SoundsController.Instance.RunSound(soundJump);
-
         }
     }
 
+    // Xử lý rơi qua nền tảng
     private void HandlePlatformDrop()
     {
         if (Input.GetKeyDown(userConfiguration.getDownKey()) && gameObject.layer == fighterLayer)
@@ -115,14 +114,15 @@ public class KitsuneMovement : MonoBehaviour
         }
     }
 
+    // Lật hướng nhân vật
     private void Flip()
     {
         userConfiguration.setFacingRight(!userConfiguration.getFacingRight());
 
-        // Cambiar la orientaci�n del sprite
+        // Thay đổi hướng của sprite
         spriteRenderer.flipX = !spriteRenderer.flipX;
 
-        // Invertir la posici�n X del weaponHitBox
+        // Đảo ngược vị trí X của weaponHitBox
         if (weaponHitBox != null)
         {
             Vector3 localPosition = weaponHitBox.localPosition;
@@ -134,7 +134,7 @@ public class KitsuneMovement : MonoBehaviour
             groundCheck.localPosition = localPositionGroundChekc;
         }
 
-        // Invertir el CapsuleCollider2D
+        // Đảo ngược CapsuleCollider2D
         if (playerCollider != null)
         {
             Vector2 offset = playerCollider.offset;
@@ -143,6 +143,7 @@ public class KitsuneMovement : MonoBehaviour
         }
     }
 
+    // Xử lý khi va chạm với đối tượng khác
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("OneWayPlatform"))
@@ -151,6 +152,7 @@ public class KitsuneMovement : MonoBehaviour
         }
     }
 
+    // Xử lý khi kết thúc va chạm với đối tượng khác
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("OneWayPlatform"))
@@ -159,6 +161,7 @@ public class KitsuneMovement : MonoBehaviour
         }
     }
 
+    // Vô hiệu hóa va chạm với nền tảng tạm thời
     private IEnumerator DisablePlatformCollision()
     {
         BoxCollider2D platformCollider = currentOneWayPlatform.GetComponent<BoxCollider2D>();
@@ -168,6 +171,7 @@ public class KitsuneMovement : MonoBehaviour
         Physics2D.IgnoreCollision(playerCollider, platformCollider, false);
     }
 
+    // Kiểm tra và xác thực các tham chiếu
     private void OnValidate()
     {
         groundCheck = transform.Find("GroundCheck");
@@ -176,16 +180,18 @@ public class KitsuneMovement : MonoBehaviour
         fighterLayer = LayerMask.NameToLayer("BaseFighter");
     }
 
+    // Vẽ gizmos để hiển thị trong trình chỉnh sửa
     private void OnDrawGizmosSelected()
     {
-        // Visualizar el �rea de detecci�n del suelo en el editor
+        // Hiển thị khu vực phát hiện mặt đất trong trình chỉnh sửa
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
 
+    // Khởi tạo hướng ban đầu của nhân vật
     public void InitializeFacingDirection()
     {
-        // Ajustar el sprite y componentes según el valor inicial de facingRight
+        // Điều chỉnh sprite và các thành phần theo giá trị ban đầu của facingRight
         if (!userConfiguration.getFacingRight())
         {
             spriteRenderer.flipX = true;
@@ -206,11 +212,13 @@ public class KitsuneMovement : MonoBehaviour
         }
     }
 
+    // Lấy cấu hình người dùng
     public UserConfiguration getUserConfiguration()
     {
         return userConfiguration;
     }
 
+    // Lấy thành phần Animator
     public Animator getAnimator()
     {
         return animator;

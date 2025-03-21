@@ -1,24 +1,24 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StageEventController : MonoBehaviour
 {
-    public GameObject shenlongPrefab; // Prefab de Shenlong
+    public GameObject shenlongPrefab; // Prefab của Shenlong
 
-    [Header("L�mites del Escenario")]
-    public Vector2 spawnPositionMin; // L�mite inferior para la posici�n inicial de Shenlong
-    public Vector2 spawnPositionMax; // L�mite superior para la posici�n inicial de Shenlong
-    public Vector2 targetPositionMin; // L�mite inferior para la posici�n final de Shenlong
-    public Vector2 targetPositionMax; // L�mite superior para la posici�n final de Shenlong
+    [Header("Giới hạn của map")]
+    public Vector2 spawnPositionMin; // Giới hạn dưới cho vị trí ban đầu của Shenlong
+    public Vector2 spawnPositionMax; // Giới hạn trên cho vị trí ban đầu của Shenlong
+    public Vector2 targetPositionMin; // Giới hạn dưới cho vị trí cuối cùng của Shenlong
+    public Vector2 targetPositionMax; // Giới hạn trên cho vị trí cuối cùng của Shenlong
 
-    [Header("Intervalo de Aparici�n")]
-    public float minSpawnInterval = 10f; // Tiempo m�nimo entre apariciones
-    public float maxSpawnInterval = 20f; // Tiempo m�ximo entre apariciones
+    [Header("Khoảng thời gian xuất hiện")]
+    public float minSpawnInterval = 10f; // Thời gian tối thiểu giữa các lần xuất hiện
+    public float maxSpawnInterval = 20f; // Thời gian tối đa giữa các lần xuất hiện
 
-    private float nextSpawnTime; // Tiempo restante para la pr�xima aparici�n
+    private float nextSpawnTime; // Thời gian còn lại cho lần xuất hiện tiếp theo
 
     void Start()
     {
-        // Calcular el tiempo inicial para la primera aparici�n
+        // Tính toán thời gian ban đầu cho lần xuất hiện đầu tiên
         nextSpawnTime = Random.Range(minSpawnInterval, maxSpawnInterval);
     }
 
@@ -29,14 +29,15 @@ public class StageEventController : MonoBehaviour
         if (nextSpawnTime <= 0f)
         {
             SpawnShenlong();
-            // Calcular el tiempo aleatorio para la siguiente aparici�n
+            // Tính toán thời gian ngẫu nhiên cho lần xuất hiện tiếp theo
             nextSpawnTime = Random.Range(minSpawnInterval, maxSpawnInterval);
         }
     }
 
+    // Tạo Shenlong
     void SpawnShenlong()
     {
-        // Crear una posici�n inicial y final aleatoria dentro de los l�mites
+        // Tạo vị trí ban đầu và cuối cùng ngẫu nhiên trong giới hạn
         Vector2 startPosition = new Vector2(
             Random.Range(spawnPositionMin.x, spawnPositionMax.x),
             Random.Range(spawnPositionMin.y, spawnPositionMax.y)
@@ -47,7 +48,7 @@ public class StageEventController : MonoBehaviour
             Random.Range(targetPositionMin.y, targetPositionMax.y)
         );
 
-        // Instanciar a Shenlong
+        // Khởi tạo Shenlong
         GameObject shenlong = Instantiate(shenlongPrefab);
         ShenlongController controller = shenlong.GetComponent<ShenlongController>();
 
@@ -57,6 +58,6 @@ public class StageEventController : MonoBehaviour
             controller.endPosition = endPosition;
         }
 
-        Debug.Log("�Shenlong ha aparecido!");
+        Debug.Log("Shenlong đã xuất hiện!");
     }
 }

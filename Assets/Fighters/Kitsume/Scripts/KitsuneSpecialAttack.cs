@@ -1,34 +1,35 @@
-using Unity.VisualScripting;
+﻿using Unity.VisualScripting;
 using UnityEngine;
 
 public class KitsuneSpecialAttack : MonoBehaviour
 {
-    public float specialCharge = 0f;
-    public float maxCharge;
+    public float specialCharge = 0f; // Năng lượng tấn công đặc biệt hiện tại
+    public float maxCharge; // Năng lượng tấn công đặc biệt tối đa
 
-    private bool isReady = false;
-    private UIController UIController;
+    private bool isReady = false; // Trạng thái sẵn sàng của tấn công đặc biệt
+    private UIController UIController; // Điều khiển giao diện người dùng
 
-    // Agregar una referencia al Animator
-    public Animator animator;
+    // Thêm tham chiếu đến Animator
+    public Animator animator; // Thành phần Animator
 
-    // Prefab para el efecto visual del ataque especial
-    public GameObject specialAttackEffect;
+    // Prefab cho hiệu ứng hình ảnh của tấn công đặc biệt
+    public GameObject specialAttackEffect; // Hiệu ứng tấn công đặc biệt
 
-    [SerializeField] private GameObject FireBall;
+    [SerializeField] private GameObject FireBall; // Đối tượng cầu lửa
 
     private void Start()
     {
         UIController = GetComponent<UIController>();
         updateUI();
 
-        // Aseg�rate de asignar el Animator
+        // Đảm bảo gán Animator
         if (animator == null)
         {
             animator = GetComponent<Animator>();
         }
     }
 
+    // Tăng năng lượng tấn công đặc biệt
     public void increaseCharge(float amount)
     {
         if (!isReady)
@@ -39,18 +40,19 @@ public class KitsuneSpecialAttack : MonoBehaviour
             if (specialCharge >= maxCharge)
             {
                 isReady = true;
-                Debug.Log("Special Attack Ready!");
+                Debug.Log("Tấn công đặc biệt đã sẵn sàng!");
             }
 
             updateUI();
         }
     }
 
+    // Sử dụng tấn công đặc biệt
     public void useSpecialAttack()
     {
         if (isReady)
         {
-            Debug.Log("Special Attack Activated!");
+            Debug.Log("Tấn công đặc biệt đã kích hoạt!");
             performSpecialAttack();
             specialCharge = 0f;
             isReady = false;
@@ -58,9 +60,10 @@ public class KitsuneSpecialAttack : MonoBehaviour
         }
     }
 
+    // Thực hiện tấn công đặc biệt
     private void performSpecialAttack()
     {
-        // Activar animaci�n del ataque especial
+        // Kích hoạt hoạt ảnh tấn công đặc biệt
         if (animator != null)
         {
             animator.SetTrigger("specialAttack");
@@ -74,21 +77,23 @@ public class KitsuneSpecialAttack : MonoBehaviour
 
         Instantiate(FireBall, transform.position, Quaternion.identity);
         /*
-        // Crear el efecto especial si existe el prefab
+        // Tạo hiệu ứng đặc biệt nếu tồn tại prefab
         if (specialAttackEffect != null)
         {
             Instantiate(specialAttackEffect, transform.position, Quaternion.identity);
         }
         */
 
-        Debug.Log("Performing the special attack!");
+        Debug.Log("Đang thực hiện tấn công đặc biệt!");
     }
 
+    // Cập nhật giao diện người dùng
     private void updateUI()
     {
         UIController.updateSpecialBar(specialCharge, maxCharge);
     }
 
+    // Thiết lập năng lượng tấn công đặc biệt tối đa
     public void setMaxCharge(float maxChargeFromPersonaje)
     {
         this.maxCharge = maxChargeFromPersonaje;
